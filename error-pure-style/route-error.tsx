@@ -4,6 +4,7 @@ import {
     useLocation,
 } from "react-router";
 import React, { useState } from "react";
+import "./route-error.css";
 
 const RouteError = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -29,35 +30,36 @@ const RouteError = () => {
     const is404 = errorData.status === 404;
 
     return (
-        <div dir="ltr" className="min-h-screen flex items-center justify-center bg-linear-to-br from-zinc-900 via-red-950 to-black px-4">
-            <div className="relative w-full max-w-2xl rounded-3xl border border-white/10 bg-white/10 backdrop-blur-xl shadow-2xl p-8 text-white">
+        <div dir="ltr" className="route-error-wrapper">
+            <div className="route-error-card">
 
                 {/* Glow */}
-                <div className="absolute -top-20 -left-20 w-64 h-64 bg-red-600/30 rounded-full blur-3xl" />
+                <div className="route-error-glow" />
 
                 {/* Header */}
-                <div className="flex items-center gap-4 mb-6">
-                    <div className="w-14 h-14 rounded-xl bg-red-600/20 flex items-center justify-center">
+                <div className="route-error-header">
+                    <div className="route-error-icon">
                         {is404 ? "🔍" : "⚠️"}
                     </div>
                     <div>
-                        <h1 className="text-3xl font-bold">
+                        <h1 className="route-error-title">
                             {is404 ? "Page Not Found" : `Error ${errorData.status}`}
                         </h1>
-                        <p className="text-red-300">{errorData.statusText}</p>
+                        <p className="route-error-subtitle">
+                            {errorData.statusText}
+                        </p>
                     </div>
                 </div>
 
                 {/* Message */}
-                <p className="text-lg text-zinc-200 mb-6">
-                    {is404 
+                <p className="route-error-message">
+                    {is404
                         ? "The page you're looking for doesn't exist or has been moved."
-                        : errorData.message
-                    }
+                        : errorData.message}
                 </p>
 
                 {/* Info Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mb-6">
+                <div className="route-error-grid">
                     <Info label="Route" value={errorData.path} />
                     <Info label="Time" value={errorData.time} />
                     <Info label="Environment" value={import.meta.env.MODE} />
@@ -65,31 +67,44 @@ const RouteError = () => {
                 </div>
 
                 {/* Actions */}
-                <div className="flex flex-wrap gap-3 mb-4">
+                <div className="route-error-actions">
                     <Button onClick={() => window.location.reload()}>
                         Retry
                     </Button>
-                    <Button onClick={() => window.history.back()} variant="secondary">
+
+                    <Button
+                        onClick={() => window.history.back()}
+                        variant="secondary"
+                    >
                         Go Back
                     </Button>
-                    <Button onClick={() => (window.location.href = "/")} variant="ghost">
+
+                    <Button
+                        onClick={() => (window.location.href = "/")}
+                        variant="ghost"
+                    >
                         Home
                     </Button>
-                    <Button onClick={copyError} variant="outline">
+
+                    <Button
+                        onClick={copyError}
+                        variant="outline"
+                    >
                         Copy Error
                     </Button>
                 </div>
 
-                {/* Technical Details */}
+                {/* Technical Details Toggle */}
                 <button
                     onClick={() => setShowDetails(!showDetails)}
-                    className="text-sm text-red-300 hover:underline"
+                    className="route-error-toggle"
                 >
                     {showDetails ? "Hide" : "Show"} technical details
                 </button>
 
+                {/* Technical Details */}
                 {showDetails && (
-                    <pre className="mt-4 max-h-64 overflow-auto rounded-xl bg-black/50 p-4 text-xs text-red-200">
+                    <pre className="route-error-pre">
                         {JSON.stringify(errorData, null, 2)}
                     </pre>
                 )}
@@ -103,9 +118,9 @@ export default RouteError;
 /* -------------------------------- */
 
 const Info = ({ label, value }: { label: string; value: string }) => (
-    <div className="rounded-xl bg-white/5 p-3 border border-white/10">
-        <p className="text-zinc-400">{label}</p>
-        <p className="break-all">{value}</p>
+    <div className="route-error-info">
+        <p className="route-error-info-label">{label}</p>
+        <p className="route-error-info-value">{value}</p>
     </div>
 );
 
@@ -113,21 +128,13 @@ const Button = ({
     children,
     onClick,
     variant = "primary",
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-}: any) => {
-    const base =
-        "px-4 py-2 rounded-xl text-sm font-semibold transition-all";
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const styles: any = {
-        primary: "bg-red-600 hover:bg-red-700",
-        secondary: "bg-zinc-700 hover:bg-zinc-600",
-        ghost: "bg-transparent hover:bg-white/10",
-        outline:
-            "border border-red-500 text-red-300 hover:bg-red-500/10",
-    };
-
+}: any) => {
     return (
-        <button onClick={onClick} className={`${base} ${styles[variant]}`}>
+        <button
+            onClick={onClick}
+            className={`route-error-btn ${variant}`}
+        >
             {children}
         </button>
     );
